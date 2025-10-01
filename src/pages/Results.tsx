@@ -135,23 +135,23 @@ const Results = () => {
       <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
         {/* Header */}
         <div className="text-center space-y-4">
-          <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
+          <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground animate-bounce-subtle hover:scale-110 transition-transform cursor-default">
             Your Personalized Path
           </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent animate-fade-up">
             Discover Your Future
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-lg animate-fade-in" style={{ animationDelay: "0.2s" }}>
             Based on your unique personality and aspirations
           </p>
         </div>
 
         {/* Personality Snapshot */}
-        <Card className="p-8 shadow-elegant">
+        <Card className="p-8 shadow-elegant animate-slide-in-left hover:shadow-glow transition-all">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-primary/10 rounded-full">
-                <Sparkles className="w-6 h-6 text-primary" />
+              <div className="p-3 bg-primary/10 rounded-full animate-bounce-subtle">
+                <Sparkles className="w-6 h-6 text-primary animate-spin-slow" />
               </div>
               <h2 className="text-2xl font-bold">Personality Snapshot</h2>
             </div>
@@ -188,11 +188,11 @@ const Results = () => {
         </Card>
 
         {/* Career Suggestions */}
-        <Card className="p-8 shadow-elegant">
+        <Card className="p-8 shadow-elegant animate-slide-in-right hover:shadow-glow transition-all">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-accent/10 rounded-full">
-                <Briefcase className="w-6 h-6 text-accent" />
+              <div className="p-3 bg-accent/10 rounded-full animate-bounce-subtle">
+                <Briefcase className="w-6 h-6 text-accent animate-wiggle" />
               </div>
               <h2 className="text-2xl font-bold">Top Career Paths for You</h2>
             </div>
@@ -201,15 +201,16 @@ const Results = () => {
               {careers.map((career, index) => (
                 <Card
                   key={index}
-                  className="p-6 hover:shadow-glow transition-all cursor-pointer group"
+                  className="p-6 hover:shadow-glow hover:-translate-y-2 transition-all duration-300 cursor-pointer group animate-scale-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="space-y-3">
-                    <div className="text-4xl">{career.icon}</div>
+                    <div className="text-4xl group-hover:animate-bounce-subtle">{career.icon}</div>
                     <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
                       {career.title}
                     </h3>
                     <p className="text-sm text-muted-foreground">{career.reason}</p>
-                    <Button variant="ghost" size="sm" className="w-full">
+                    <Button variant="ghost" size="sm" className="w-full hover:scale-105 transition-transform">
                       Learn More
                     </Button>
                   </div>
@@ -260,34 +261,34 @@ const Results = () => {
         </Card>
 
         {/* Interactive Actions */}
-        <div className="grid md:grid-cols-4 gap-4">
+        <div className="grid md:grid-cols-4 gap-4 animate-fade-up">
           <Button
             variant="outline"
-            className="h-20 flex-col gap-2 hover:border-primary hover:text-primary"
+            className="h-20 flex-col gap-2 hover:border-primary hover:text-primary hover:scale-110 hover:-translate-y-1 transition-all group"
           >
-            <MessageCircle className="w-5 h-5" />
+            <MessageCircle className="w-5 h-5 group-hover:animate-bounce-subtle" />
             <span className="text-sm">Ask AI</span>
           </Button>
           <Button
             variant="outline"
-            className="h-20 flex-col gap-2 hover:border-primary hover:text-primary"
+            className="h-20 flex-col gap-2 hover:border-primary hover:text-primary hover:scale-110 hover:-translate-y-1 transition-all group"
             onClick={() => navigate("/quiz")}
           >
-            <RefreshCw className="w-5 h-5" />
+            <RefreshCw className="w-5 h-5 group-hover:animate-spin-slow" />
             <span className="text-sm">Retake Quiz</span>
           </Button>
           <Button
             variant="outline"
-            className="h-20 flex-col gap-2 hover:border-accent hover:text-accent"
+            className="h-20 flex-col gap-2 hover:border-accent hover:text-accent hover:scale-110 hover:-translate-y-1 transition-all group"
           >
-            <Download className="w-5 h-5" />
+            <Download className="w-5 h-5 group-hover:animate-bounce-subtle" />
             <span className="text-sm">Download PDF</span>
           </Button>
           <Button
             variant="outline"
-            className="h-20 flex-col gap-2 hover:border-accent hover:text-accent"
+            className="h-20 flex-col gap-2 hover:border-accent hover:text-accent hover:scale-110 hover:-translate-y-1 transition-all group"
           >
-            <Share2 className="w-5 h-5" />
+            <Share2 className="w-5 h-5 group-hover:animate-wiggle" />
             <span className="text-sm">Share Results</span>
           </Button>
         </div>

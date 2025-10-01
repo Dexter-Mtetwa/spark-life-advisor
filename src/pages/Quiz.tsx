@@ -129,32 +129,32 @@ const Quiz = () => {
   if (mode === "choice") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center p-6">
-        <Card className="max-w-2xl w-full p-8 md:p-12 shadow-elegant animate-fade-in">
+        <Card className="max-w-2xl w-full p-8 md:p-12 shadow-elegant animate-scale-in hover:shadow-glow transition-all">
           <div className="text-center space-y-6">
-            <div className="inline-flex p-3 bg-primary/10 rounded-full mb-4">
-              <Sparkles className="w-8 h-8 text-primary" />
+            <div className="inline-flex p-3 bg-primary/10 rounded-full mb-4 animate-bounce-subtle">
+              <Sparkles className="w-8 h-8 text-primary animate-spin-slow" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-fade-up">
               Let's Discover Your Path
             </h1>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-lg animate-fade-in" style={{ animationDelay: "0.2s" }}>
               Choose how you'd like to share yourself with our AI guide
             </p>
 
-            <div className="space-y-4 pt-8">
+            <div className="space-y-4 pt-8 animate-fade-up" style={{ animationDelay: "0.3s" }}>
               <Button
                 onClick={() => setMode("quiz")}
-                className="w-full h-20 text-lg bg-gradient-to-r from-primary to-primary-glow hover:shadow-glow transition-all"
+                className="w-full h-20 text-lg bg-gradient-to-r from-primary to-primary-glow hover:shadow-glow hover:scale-105 transition-all group"
                 size="lg"
               >
-                <Sparkles className="mr-2 w-5 h-5" />
+                <Sparkles className="mr-2 w-5 h-5 group-hover:animate-spin-slow" />
                 Take Interactive Quiz
               </Button>
 
               <Button
                 onClick={() => setMode("freetext")}
                 variant="outline"
-                className="w-full h-20 text-lg border-2 hover:border-accent hover:text-accent transition-all"
+                className="w-full h-20 text-lg border-2 hover:border-accent hover:text-accent hover:scale-105 transition-all"
                 size="lg"
               >
                 <ArrowRight className="mr-2 w-5 h-5" />
@@ -162,7 +162,7 @@ const Quiz = () => {
               </Button>
             </div>
 
-            <p className="text-sm text-muted-foreground pt-4">
+            <p className="text-sm text-muted-foreground pt-4 animate-fade-in" style={{ animationDelay: "0.5s" }}>
               Both paths lead to personalized insights ✨
             </p>
           </div>
@@ -174,19 +174,19 @@ const Quiz = () => {
   if (mode === "freetext") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center p-6">
-        <Card className="max-w-3xl w-full p-8 md:p-12 shadow-elegant animate-fade-in">
+        <Card className="max-w-3xl w-full p-8 md:p-12 shadow-elegant animate-slide-in-right hover:shadow-glow transition-all">
           <div className="space-y-6">
             <Button
               onClick={() => setMode("choice")}
               variant="ghost"
               size="sm"
-              className="mb-4"
+              className="mb-4 hover:scale-105 transition-transform"
             >
               <ArrowLeft className="mr-2 w-4 h-4" />
               Back
             </Button>
 
-            <div className="text-center space-y-3">
+            <div className="text-center space-y-3 animate-fade-up">
               <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Tell Us About Yourself
               </h1>
@@ -197,20 +197,20 @@ const Quiz = () => {
 
             <Textarea
               placeholder="I love solving problems and working with people. I'm passionate about technology and creative projects. In my free time, I enjoy..."
-              className="min-h-[300px] text-base resize-none"
+              className="min-h-[300px] text-base resize-none animate-fade-in transition-all focus:shadow-glow"
               value={freeText}
               onChange={(e) => setFreeText(e.target.value)}
             />
 
-            <div className="flex justify-end">
+            <div className="flex justify-end animate-slide-in-left">
               <Button
                 onClick={handleFreeTextSubmit}
                 disabled={!freeText.trim()}
                 size="lg"
-                className="bg-gradient-to-r from-accent to-accent-glow hover:shadow-accent-glow transition-all"
+                className="bg-gradient-to-r from-accent to-accent-glow hover:shadow-accent-glow hover:scale-110 transition-all group"
               >
                 Generate My Path
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:animate-bounce-subtle" />
               </Button>
             </div>
           </div>
@@ -224,14 +224,15 @@ const Quiz = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center p-6">
-      <Card className="max-w-3xl w-full p-8 md:p-12 shadow-elegant animate-fade-in">
+      <Card className="max-w-3xl w-full p-8 md:p-12 shadow-elegant animate-fade-in hover:shadow-glow transition-all">
         <div className="space-y-8">
-          <div className="space-y-4">
+          <div className="space-y-4 animate-slide-in-left">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <Button
                 onClick={() => setMode("choice")}
                 variant="ghost"
                 size="sm"
+                className="hover:scale-105 transition-transform"
               >
                 <ArrowLeft className="mr-2 w-4 h-4" />
                 Back
@@ -240,10 +241,10 @@ const Quiz = () => {
                 Question {currentQuestion + 1} of {quizQuestions.length}
               </span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-2 animate-fade-in" />
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade-up">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
               {currentQ.question}
             </h2>
@@ -253,13 +254,13 @@ const Quiz = () => {
               onValueChange={handleQuizAnswer}
               className="space-y-4"
             >
-              {currentQ.options.map((option) => (
-                <div key={option.value}>
+              {currentQ.options.map((option, idx) => (
+                <div key={option.value} className="animate-scale-in" style={{ animationDelay: `${idx * 0.1}s` }}>
                   <Label
                     htmlFor={`${currentQ.id}-${option.value}`}
-                    className={`flex items-start space-x-3 p-6 rounded-lg border-2 cursor-pointer transition-all ${
+                    className={`flex items-start space-x-3 p-6 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 ${
                       answers[currentQuestion] === option.value
-                        ? "border-primary bg-primary/5"
+                        ? "border-primary bg-primary/5 shadow-glow"
                         : "border-border hover:border-primary/50 hover:bg-secondary/50"
                     }`}
                   >
@@ -274,11 +275,12 @@ const Quiz = () => {
             </RadioGroup>
           </div>
 
-          <div className="flex justify-between pt-4">
+          <div className="flex justify-between pt-4 animate-slide-in-right">
             <Button
               onClick={handleBack}
               variant="outline"
               disabled={currentQuestion === 0}
+              className="hover:scale-105 transition-transform"
             >
               <ArrowLeft className="mr-2 w-4 h-4" />
               Previous
@@ -286,10 +288,10 @@ const Quiz = () => {
             <Button
               onClick={handleNext}
               disabled={!answers[currentQuestion]}
-              className="bg-gradient-to-r from-primary to-primary-glow hover:shadow-glow transition-all"
+              className="bg-gradient-to-r from-primary to-primary-glow hover:shadow-glow hover:scale-110 transition-all group"
             >
               {currentQuestion === quizQuestions.length - 1 ? "See Results" : "Next"}
-              <ArrowRight className="ml-2 w-4 h-4" />
+              <ArrowRight className="ml-2 w-4 h-4 group-hover:animate-bounce-subtle" />
             </Button>
           </div>
         </div>
