@@ -63,7 +63,10 @@ Make questions sophisticated, non-obvious, and ensure they test actual personali
     }
 
     const data = await response.json();
-    const content = data.choices[0].message.content;
+    let content = data.choices[0].message.content;
+    
+    // Strip markdown code blocks if present
+    content = content.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
     
     // Parse the JSON response from the AI
     let questions;
