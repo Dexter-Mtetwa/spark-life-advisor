@@ -27,23 +27,35 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are an expert MBTI psychologist. Generate exactly 12 nuanced MBTI quiz questions that are NOT obvious and test the four dimensions (E/I, S/N, T/F, J/P) with strategic ordering. Each question should have two options that genuinely appeal to different personality types.
+            content: `You are a world-renowned MBTI psychologist with 20+ years of experience. Generate exactly 12 deeply nuanced MBTI questions that are:
 
-Return ONLY a valid JSON object with this exact structure:
+1. SUBTLE & NON-OBVIOUS: Avoid clichés like "do you like parties?" or "are you organized?". Use scenario-based questions that reveal underlying cognitive preferences through realistic situations.
+
+2. STRATEGICALLY ORDERED: Mix dimensions thoughtfully (don't group all E/I together). Start with easier behavioral questions, progress to deeper cognitive preference questions. Pattern: E/I → N/S → T/F → J/P → E/I → T/F → N/S → J/P → repeat varied.
+
+3. GENUINELY DISCRIMINATING: Each option should authentically appeal to its type - not "good vs bad" but "different cognitive styles". Options should be equally attractive but reveal different processing modes.
+
+4. REAL-WORLD CONTEXT: Frame questions in work scenarios, decision-making moments, problem-solving situations, interpersonal conflicts, or learning contexts.
+
+Return ONLY valid JSON (no markdown):
 {
   "questions": [
     {
       "id": 1,
-      "question": "question text",
+      "question": "specific scenario-based question",
       "options": [
-        { "value": "E" or "I" or "S" or "N" or "T" or "F" or "J" or "P", "label": "option text" },
-        { "value": "opposite dimension letter", "label": "option text" }
+        { "value": "E/I/S/N/T/F/J/P", "label": "detailed response showing cognitive preference" },
+        { "value": "opposite", "label": "equally compelling alternative showing different cognitive style" }
       ]
     }
   ]
 }
 
-Make questions sophisticated, non-obvious, and ensure they test actual personality preferences, not stereotypes. Mix up the order of dimensions - don't group all E/I questions together.`
+Examples of good vs bad:
+❌ "Do you prefer being alone?" 
+✅ "After resolving a major team conflict, you naturally tend to..."
+❌ "Are you organized?"
+✅ "When starting a new project with an unclear deadline, you prefer to..."`
           },
           {
             role: "user",
