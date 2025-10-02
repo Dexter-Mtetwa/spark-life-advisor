@@ -17,123 +17,36 @@ import {
   Brain,
 } from "lucide-react";
 
-const mbtiDescriptions: Record<string, { name: string; description: string }> = {
-  INTJ: {
-    name: "The Mastermind",
-    description: "Strategic thinkers with a plan for everything. You're innovative and independent.",
-  },
-  INTP: {
-    name: "The Architect",
-    description: "Innovative inventors with an unquenchable thirst for knowledge.",
-  },
-  ENTJ: {
-    name: "The Commander",
-    description: "Bold, imaginative leaders who find ways to achieve their goals.",
-  },
-  ENTP: {
-    name: "The Debater",
-    description: "Smart, curious thinkers who love intellectual challenges.",
-  },
-  INFJ: {
-    name: "The Advocate",
-    description: "Inspiring idealists with principles and values that guide them.",
-  },
-  INFP: {
-    name: "The Mediator",
-    description: "Poetic, kind souls always searching for deeper meaning.",
-  },
-  ENFJ: {
-    name: "The Protagonist",
-    description: "Charismatic leaders who inspire others to achieve great things.",
-  },
-  ENFP: {
-    name: "The Campaigner",
-    description: "Enthusiastic, creative free spirits with infectious energy.",
-  },
-  ISTJ: {
-    name: "The Logistician",
-    description: "Practical, fact-minded individuals with reliable integrity.",
-  },
-  ISFJ: {
-    name: "The Defender",
-    description: "Dedicated protectors always ready to defend loved ones.",
-  },
-  ESTJ: {
-    name: "The Executive",
-    description: "Excellent administrators who manage things and people efficiently.",
-  },
-  ESFJ: {
-    name: "The Consul",
-    description: "Caring, social people eager to help others.",
-  },
-  ISTP: {
-    name: "The Virtuoso",
-    description: "Bold, practical experimenters and masters of tools.",
-  },
-  ISFP: {
-    name: "The Adventurer",
-    description: "Flexible, charming artists ready to explore new experiences.",
-  },
-  ESTP: {
-    name: "The Entrepreneur",
-    description: "Smart, energetic risk-takers who live on the edge.",
-  },
-  ESFP: {
-    name: "The Entertainer",
-    description: "Spontaneous, enthusiastic performers who love life.",
-  },
-};
-
-const careerSuggestions: Record<string, Array<{ title: string; reason: string; icon: string }>> = {
-  INTJ: [
-    { title: "Software Architect", reason: "Designing complex systems suits your strategic mind", icon: "💻" },
-    { title: "Data Scientist", reason: "Perfect for analytical thinking and pattern recognition", icon: "📊" },
-    { title: "Investment Analyst", reason: "Long-term strategic planning matches your vision", icon: "📈" },
-    { title: "Research Scientist", reason: "Deep, independent work exploring new frontiers", icon: "🔬" },
-    { title: "Strategic Consultant", reason: "Solving big-picture problems for organizations", icon: "🎯" },
-  ],
-  default: [
-    { title: "Project Manager", reason: "Coordinating teams and achieving goals", icon: "📋" },
-    { title: "Creative Director", reason: "Leading innovative campaigns and projects", icon: "🎨" },
-    { title: "UX Designer", reason: "Creating meaningful user experiences", icon: "✨" },
-    { title: "Marketing Strategist", reason: "Understanding people and crafting messages", icon: "📱" },
-    { title: "Business Analyst", reason: "Bridging technology and business needs", icon: "💼" },
-  ],
-};
-
 const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { mbtiType, freeText, mode } = location.state || {};
+  const { analysisData } = location.state || {};
 
-  if (!mbtiType && !freeText) {
+  if (!analysisData) {
     navigate("/quiz");
     return null;
   }
 
-  const type = mbtiType || "INTJ";
-  const profile = mbtiDescriptions[type] || mbtiDescriptions.INTJ;
-  const careers = careerSuggestions[type] || careerSuggestions.default;
+  const {
+    mbtiType,
+    personalityName,
+    description,
+    traits,
+    careers,
+    dailyTips,
+    motivation
+  } = analysisData;
 
-  const traits = [
-    { name: "Creativity", score: 75, icon: <Sparkles className="w-4 h-4" /> },
-    { name: "Social Energy", score: 60, icon: <Heart className="w-4 h-4" /> },
-    { name: "Analytical Mind", score: 85, icon: <Brain className="w-4 h-4" /> },
-    { name: "Risk Appetite", score: 70, icon: <Zap className="w-4 h-4" /> },
-  ];
-
-  const dailyTips = [
-    "Start your morning by setting clear intentions for the day",
-    "Take 10 minutes to learn something new in your field of interest",
-    "Connect with someone who inspires you",
-    "Practice a skill that aligns with your ideal career",
-    "Reflect on one thing you're grateful for in your journey",
-  ];
+  const iconMap: Record<string, JSX.Element> = {
+    "Creativity": <Sparkles className="w-4 h-4" />,
+    "Social Energy": <Heart className="w-4 h-4" />,
+    "Analytical Mind": <Brain className="w-4 h-4" />,
+    "Risk Appetite": <Zap className="w-4 h-4" />,
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 py-12 px-4">
       <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
-        {/* Header */}
         <div className="text-center space-y-4">
           <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground animate-bounce-subtle hover:scale-110 transition-transform cursor-default">
             Your Personalized Path
@@ -146,7 +59,6 @@ const Results = () => {
           </p>
         </div>
 
-        {/* Personality Snapshot */}
         <Card className="p-8 shadow-elegant animate-slide-in-left hover:shadow-glow transition-all">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
@@ -161,20 +73,20 @@ const Results = () => {
                 <div className="p-6 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg border-2 border-primary/20">
                   <div className="text-center space-y-2">
                     <p className="text-sm text-muted-foreground">Your Type</p>
-                    <p className="text-5xl font-bold text-primary">{type}</p>
-                    <p className="text-xl font-semibold">{profile.name}</p>
+                    <p className="text-5xl font-bold text-primary">{mbtiType}</p>
+                    <p className="text-xl font-semibold">{personalityName}</p>
                   </div>
                 </div>
-                <p className="text-muted-foreground">{profile.description}</p>
+                <p className="text-muted-foreground">{description}</p>
               </div>
 
               <div className="flex-1 space-y-4">
                 <p className="font-semibold">Your Key Traits</p>
-                {traits.map((trait) => (
+                {traits.map((trait: any) => (
                   <div key={trait.name} className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2">
-                        {trait.icon}
+                        {iconMap[trait.name] || <Sparkles className="w-4 h-4" />}
                         <span>{trait.name}</span>
                       </div>
                       <span className="font-semibold">{trait.score}%</span>
@@ -187,7 +99,6 @@ const Results = () => {
           </div>
         </Card>
 
-        {/* Career Suggestions */}
         <Card className="p-8 shadow-elegant animate-slide-in-right hover:shadow-glow transition-all">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
@@ -198,7 +109,7 @@ const Results = () => {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {careers.map((career, index) => (
+              {careers.map((career: any, index: number) => (
                 <Card
                   key={index}
                   className="p-6 hover:shadow-glow hover:-translate-y-2 transition-all duration-300 cursor-pointer group animate-scale-in"
@@ -220,7 +131,6 @@ const Results = () => {
           </div>
         </Card>
 
-        {/* Self-Maximization Plan */}
         <Card className="p-8 shadow-elegant">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
@@ -231,7 +141,7 @@ const Results = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              {dailyTips.map((tip, index) => (
+              {dailyTips.map((tip: string, index: number) => (
                 <div
                   key={index}
                   className="flex items-start gap-3 p-4 bg-gradient-to-r from-secondary to-transparent rounded-lg"
@@ -250,9 +160,7 @@ const Results = () => {
                 <div>
                   <p className="font-semibold mb-2">Daily Motivation</p>
                   <p className="text-muted-foreground italic">
-                    "Success is not final, failure is not fatal: it is the courage to continue that
-                    counts. Your unique strengths as {profile.name} position you perfectly for
-                    greatness."
+                    {motivation}
                   </p>
                 </div>
               </div>
@@ -260,7 +168,6 @@ const Results = () => {
           </div>
         </Card>
 
-        {/* Interactive Actions */}
         <div className="grid md:grid-cols-4 gap-4 animate-fade-up">
           <Button
             variant="outline"
@@ -293,7 +200,6 @@ const Results = () => {
           </Button>
         </div>
 
-        {/* Back to Home */}
         <div className="text-center">
           <Button onClick={() => navigate("/")} variant="ghost">
             Back to Home

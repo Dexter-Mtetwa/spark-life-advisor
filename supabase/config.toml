@@ -1,1 +1,7 @@
 project_id = "nivuddvpdbytyezgsewt"
+
+[functions.generate-quiz]
+verify_jwt = false
+
+[functions.analyze-results]
+verify_jwt = false

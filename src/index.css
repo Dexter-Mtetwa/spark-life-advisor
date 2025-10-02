@@ -27,9 +27,9 @@ All colors MUST be HSL.
     --muted: 240 15% 96%;
     --muted-foreground: 240 10% 50%;
 
-    --accent: 180 75% 50%;
+    --accent: 280 65% 55%;
     --accent-foreground: 0 0% 100%;
-    --accent-glow: 180 85% 65%;
+    --accent-glow: 280 75% 70%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
@@ -41,13 +41,13 @@ All colors MUST be HSL.
     --radius: 0.75rem;
 
     --gradient-primary: linear-gradient(135deg, hsl(263 70% 50%), hsl(263 85% 65%));
-    --gradient-accent: linear-gradient(135deg, hsl(180 75% 50%), hsl(200 80% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(263 70% 50%), hsl(240 60% 45%), hsl(180 75% 50%));
+    --gradient-accent: linear-gradient(135deg, hsl(280 65% 55%), hsl(290 70% 65%));
+    --gradient-hero: linear-gradient(135deg, hsl(263 70% 50%), hsl(270 65% 55%), hsl(280 65% 55%));
     --gradient-subtle: linear-gradient(180deg, hsl(240 20% 99%), hsl(240 30% 97%));
 
     --shadow-elegant: 0 10px 30px -10px hsl(263 70% 50% / 0.2);
     --shadow-glow: 0 0 40px hsl(263 85% 65% / 0.3);
-    --shadow-accent-glow: 0 0 30px hsl(180 85% 65% / 0.3);
+    --shadow-accent-glow: 0 0 30px hsl(280 75% 70% / 0.3);
 
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -81,9 +81,9 @@ All colors MUST be HSL.
     --muted: 240 15% 18%;
     --muted-foreground: 240 10% 60%;
 
-    --accent: 180 75% 55%;
+    --accent: 280 70% 60%;
     --accent-foreground: 0 0% 100%;
-    --accent-glow: 180 85% 70%;
+    --accent-glow: 280 80% 75%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
@@ -93,13 +93,13 @@ All colors MUST be HSL.
     --ring: 263 75% 60%;
 
     --gradient-primary: linear-gradient(135deg, hsl(263 75% 60%), hsl(263 85% 70%));
-    --gradient-accent: linear-gradient(135deg, hsl(180 75% 55%), hsl(200 80% 65%));
-    --gradient-hero: linear-gradient(135deg, hsl(263 75% 60%), hsl(240 60% 50%), hsl(180 75% 55%));
+    --gradient-accent: linear-gradient(135deg, hsl(280 70% 60%), hsl(290 75% 70%));
+    --gradient-hero: linear-gradient(135deg, hsl(263 75% 60%), hsl(270 70% 60%), hsl(280 70% 60%));
     --gradient-subtle: linear-gradient(180deg, hsl(240 25% 10%), hsl(240 30% 12%));
 
     --shadow-elegant: 0 10px 30px -10px hsl(263 75% 60% / 0.4);
     --shadow-glow: 0 0 40px hsl(263 85% 70% / 0.4);
-    --shadow-accent-glow: 0 0 30px hsl(180 85% 70% / 0.4);
+    --shadow-accent-glow: 0 0 30px hsl(280 80% 75% / 0.4);
 
     --sidebar-background: 240 20% 12%;
     --sidebar-foreground: 240 20% 95%;

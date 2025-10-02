@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,95 +6,68 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
+import { Sparkles, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-const quizQuestions = [
-  {
-    id: 1,
-    question: "At social gatherings, you prefer to:",
-    options: [
-      { value: "E", label: "Meet new people and engage in group conversations" },
-      { value: "I", label: "Have deep conversations with a few close friends" },
-    ],
-  },
-  {
-    id: 2,
-    question: "When making decisions, you rely more on:",
-    options: [
-      { value: "T", label: "Logic and objective analysis" },
-      { value: "F", label: "Personal values and how it affects people" },
-    ],
-  },
-  {
-    id: 3,
-    question: "You prefer to:",
-    options: [
-      { value: "J", label: "Plan things in advance and stick to the plan" },
-      { value: "P", label: "Keep your options open and adapt as you go" },
-    ],
-  },
-  {
-    id: 4,
-    question: "When learning something new, you focus on:",
-    options: [
-      { value: "S", label: "Practical applications and concrete details" },
-      { value: "N", label: "Theories, patterns, and future possibilities" },
-    ],
-  },
-  {
-    id: 5,
-    question: "Your ideal work environment is:",
-    options: [
-      { value: "E", label: "Collaborative with lots of team interaction" },
-      { value: "I", label: "Quiet with time for focused, independent work" },
-    ],
-  },
-  {
-    id: 6,
-    question: "When faced with a problem, you:",
-    options: [
-      { value: "T", label: "Analyze it systematically and look for logical solutions" },
-      { value: "F", label: "Consider how it impacts people and seek harmony" },
-    ],
-  },
-  {
-    id: 7,
-    question: "You feel more energized when:",
-    options: [
-      { value: "S", label: "Dealing with real, tangible tasks and present-moment challenges" },
-      { value: "N", label: "Exploring abstract ideas and imagining future scenarios" },
-    ],
-  },
-  {
-    id: 8,
-    question: "Your typical approach to projects is:",
-    options: [
-      { value: "J", label: "Make a detailed plan and work steadily toward completion" },
-      { value: "P", label: "Start spontaneously and figure things out as you go" },
-    ],
-  },
-];
+type QuizQuestion = {
+  id: number;
+  question: string;
+  options: Array<{ value: string; label: string }>;
+};
 
 const Quiz = () => {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"choice" | "quiz" | "freetext">("choice");
+  const { toast } = useToast();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [freeText, setFreeText] = useState("");
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [analyzing, setAnalyzing] = useState(false);
 
-  const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
+  useEffect(() => {
+    loadQuestions();
+  }, []);
+
+  const loadQuestions = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.functions.invoke('generate-quiz');
+      
+      if (error) throw error;
+      
+      if (data?.questions) {
+        setQuestions(data.questions);
+      } else {
+        throw new Error("Invalid quiz data received");
+      }
+    } catch (error) {
+      console.error("Error loading questions:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load quiz questions. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalQuestions = questions.length + 1;
+  const progress = ((currentQuestion + 1) / totalQuestions) * 100;
 
   const handleQuizAnswer = (value: string) => {
     setAnswers({ ...answers, [currentQuestion]: value });
   };
 
-  const handleNext = () => {
-    if (currentQuestion < quizQuestions.length - 1) {
+  const handleNext = async () => {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+    } else if (currentQuestion === questions.length - 1) {
+      setCurrentQuestion(questions.length);
     } else {
-      // Calculate MBTI type from answers
-      const mbtiType = calculateMBTI();
-      navigate("/results", { state: { mbtiType, mode: "quiz" } });
+      await analyzeResults();
     }
   };
 
@@ -104,99 +77,76 @@ const Quiz = () => {
     }
   };
 
-  const handleFreeTextSubmit = () => {
-    if (freeText.trim()) {
-      navigate("/results", { state: { freeText, mode: "freetext" } });
+  const analyzeResults = async () => {
+    try {
+      setAnalyzing(true);
+      const { data, error } = await supabase.functions.invoke('analyze-results', {
+        body: { answers, freeText }
+      });
+
+      if (error) throw error;
+
+      navigate("/results", { state: { analysisData: data } });
+    } catch (error) {
+      console.error("Error analyzing results:", error);
+      toast({
+        title: "Error",
+        description: "Failed to analyze your results. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setAnalyzing(false);
     }
   };
 
-  const calculateMBTI = () => {
-    const traits = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
-    Object.values(answers).forEach((answer) => {
-      traits[answer as keyof typeof traits]++;
-    });
-
-    const mbti = [
-      traits.E >= traits.I ? "E" : "I",
-      traits.S >= traits.N ? "S" : "N",
-      traits.T >= traits.F ? "T" : "F",
-      traits.J >= traits.P ? "J" : "P",
-    ].join("");
-
-    return mbti;
-  };
-
-  if (mode === "choice") {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center p-6">
-        <Card className="max-w-2xl w-full p-8 md:p-12 shadow-elegant animate-scale-in hover:shadow-glow transition-all">
+        <Card className="max-w-2xl w-full p-12 shadow-elegant animate-scale-in">
           <div className="text-center space-y-6">
-            <div className="inline-flex p-3 bg-primary/10 rounded-full mb-4 animate-bounce-subtle">
-              <Sparkles className="w-8 h-8 text-primary animate-spin-slow" />
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-fade-up">
-              Let's Discover Your Path
-            </h1>
-            <p className="text-muted-foreground text-lg animate-fade-in" style={{ animationDelay: "0.2s" }}>
-              Choose how you'd like to share yourself with our AI guide
-            </p>
-
-            <div className="space-y-4 pt-8 animate-fade-up" style={{ animationDelay: "0.3s" }}>
-              <Button
-                onClick={() => setMode("quiz")}
-                className="w-full h-20 text-lg bg-gradient-to-r from-primary to-primary-glow hover:shadow-glow hover:scale-105 transition-all group"
-                size="lg"
-              >
-                <Sparkles className="mr-2 w-5 h-5 group-hover:animate-spin-slow" />
-                Take Interactive Quiz
-              </Button>
-
-              <Button
-                onClick={() => setMode("freetext")}
-                variant="outline"
-                className="w-full h-20 text-lg border-2 hover:border-accent hover:text-accent hover:scale-105 transition-all"
-                size="lg"
-              >
-                <ArrowRight className="mr-2 w-5 h-5" />
-                Describe Yourself Freely
-              </Button>
-            </div>
-
-            <p className="text-sm text-muted-foreground pt-4 animate-fade-in" style={{ animationDelay: "0.5s" }}>
-              Both paths lead to personalized insights ✨
-            </p>
+            <Loader2 className="w-12 h-12 mx-auto text-primary animate-spin" />
+            <h2 className="text-2xl font-bold">Generating Your Personalized Quiz...</h2>
+            <p className="text-muted-foreground">Using AI to create the perfect questions for you</p>
           </div>
         </Card>
       </div>
     );
   }
 
-  if (mode === "freetext") {
+  if (currentQuestion === questions.length) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center p-6">
         <Card className="max-w-3xl w-full p-8 md:p-12 shadow-elegant animate-slide-in-right hover:shadow-glow transition-all">
           <div className="space-y-6">
-            <Button
-              onClick={() => setMode("choice")}
-              variant="ghost"
-              size="sm"
-              className="mb-4 hover:scale-105 transition-transform"
-            >
-              <ArrowLeft className="mr-2 w-4 h-4" />
-              Back
-            </Button>
+            <div className="space-y-4 animate-slide-in-left">
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <Button
+                  onClick={handleBack}
+                  variant="ghost"
+                  size="sm"
+                  className="hover:scale-105 transition-transform"
+                >
+                  <ArrowLeft className="mr-2 w-4 h-4" />
+                  Back
+                </Button>
+                <span>
+                  Final Question: Tell us about yourself
+                </span>
+              </div>
+              <Progress value={progress} className="h-2 animate-fade-in" />
+            </div>
 
             <div className="text-center space-y-3 animate-fade-up">
               <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Tell Us About Yourself
+                Describe Yourself Freely
               </h1>
               <p className="text-muted-foreground">
-                Share your interests, hobbies, motivations, and what makes you unique
+                Share your interests, hobbies, motivations, dreams, and what makes you unique
               </p>
             </div>
 
             <Textarea
-              placeholder="I love solving problems and working with people. I'm passionate about technology and creative projects. In my free time, I enjoy..."
+              placeholder="I love solving problems and working with people. I'm passionate about technology and creative projects. In my free time, I enjoy reading, hiking, and learning new skills. My dream is to..."
               className="min-h-[300px] text-base resize-none animate-fade-in transition-all focus:shadow-glow"
               value={freeText}
               onChange={(e) => setFreeText(e.target.value)}
@@ -204,13 +154,22 @@ const Quiz = () => {
 
             <div className="flex justify-end animate-slide-in-left">
               <Button
-                onClick={handleFreeTextSubmit}
-                disabled={!freeText.trim()}
+                onClick={handleNext}
+                disabled={!freeText.trim() || analyzing}
                 size="lg"
                 className="bg-gradient-to-r from-accent to-accent-glow hover:shadow-accent-glow hover:scale-110 transition-all group"
               >
-                Generate My Path
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:animate-bounce-subtle" />
+                {analyzing ? (
+                  <>
+                    <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                    Analyzing Your Personality...
+                  </>
+                ) : (
+                  <>
+                    Generate My Results
+                    <ArrowRight className="ml-2 w-5 h-5 group-hover:animate-bounce-subtle" />
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -219,8 +178,8 @@ const Quiz = () => {
     );
   }
 
-  // Quiz mode
-  const currentQ = quizQuestions[currentQuestion];
+  const currentQ = questions[currentQuestion];
+  const isAnswered = answers[currentQuestion] !== undefined;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center p-6">
@@ -229,16 +188,16 @@ const Quiz = () => {
           <div className="space-y-4 animate-slide-in-left">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <Button
-                onClick={() => setMode("choice")}
+                onClick={() => navigate("/")}
                 variant="ghost"
                 size="sm"
                 className="hover:scale-105 transition-transform"
               >
                 <ArrowLeft className="mr-2 w-4 h-4" />
-                Back
+                Home
               </Button>
               <span>
-                Question {currentQuestion + 1} of {quizQuestions.length}
+                Question {currentQuestion + 1} of {totalQuestions}
               </span>
             </div>
             <Progress value={progress} className="h-2 animate-fade-in" />
@@ -287,10 +246,10 @@ const Quiz = () => {
             </Button>
             <Button
               onClick={handleNext}
-              disabled={!answers[currentQuestion]}
+              disabled={!isAnswered}
               className="bg-gradient-to-r from-primary to-primary-glow hover:shadow-glow hover:scale-110 transition-all group"
             >
-              {currentQuestion === quizQuestions.length - 1 ? "See Results" : "Next"}
+              Next
               <ArrowRight className="ml-2 w-4 h-4 group-hover:animate-bounce-subtle" />
             </Button>
           </div>
